@@ -1,0 +1,41 @@
+﻿@model IEnumerable<StoreModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Place your order</h1>
+
+<p>
+</p>
+<table class="table table-hover table-dark">
+  
+    <thead>
+        <tr>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th scope="col">My Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+                <td>
+                    @Html.ActionLink("Go here", "Create", new { id = item.Id} , new { @class = "btn btn-outline-success" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

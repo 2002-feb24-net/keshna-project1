@@ -1,0 +1,41 @@
+﻿@model IEnumerable<StoreModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Select your Location</h1>
+
+<p>
+</p>
+<table class="table table-hover table-dark">
+    <caption>Store Locations</caption>
+    <thead>
+        <tr>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th scope="col">History</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+                <td>
+                    @* HTML helper ActionLink is a direct alternative to anchor tag helper *@
+                    @Html.ActionLink("Display order history", "Details", new { id = item.Id },  new { @class = "btn btn-outline-success" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ProductModel>
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Available Products</h1>
+
+<table class="table table-hover table-dark">
+
+    <thead>
+        <tr>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.ID)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Pname)
+            </th>
+          
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th scope="auto"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pname)
+                </td>
+             
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.ActionLink("Add to Order", "PlaceOrder", new { id = item.Pname},  new { @class = "btn btn-outline-success" }) 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index" class="btn  btn-outline-success btn-sm">Go Back</a>
+</div>
