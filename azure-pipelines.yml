@@ -21,3 +21,25 @@ steps:
 - script: dotnet test --logger trx
   workingDirectory: Project1
   displayName: dotnet test
+
+
+# the default "condition" for every step is "succeeded()" - run this step if the previous step succeeded
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+
+# this task looks for a zip file and deploys it to azure app service.
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Azure subscription 1(e2856ace-6e0c-471a-af8a-8883735b305d)'
+    appType: 'webApp'
+    WebAppName: 'CupCakeKesh'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
