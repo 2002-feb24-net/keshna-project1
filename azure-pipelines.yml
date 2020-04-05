@@ -14,5 +14,5 @@ steps:
 #   displayName: show directory contents
 
 - script: dotnet build
-   workingDirectory:Project1
+  # workingDirectory:Project1
   displayName: dotnet build
