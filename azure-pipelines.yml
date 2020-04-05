@@ -1,0 +1,14 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: echo Hello, world!
+  displayName: Print Hello World
+
+- script: |
+    echo "showing current directory contents"
+    ls
+  displayName: show directory contents
