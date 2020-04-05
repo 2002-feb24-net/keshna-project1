@@ -8,8 +8,10 @@ namespace Project1.Models
     {
         [DisplayName("Product Id")]
         public int ProductId { get; set; }
+
         [DisplayName("Location Id")]
         public int LocationId { get; set; }
+
         [DisplayName("Stock")]
         public int InventoryAmount { get; set; }
     }

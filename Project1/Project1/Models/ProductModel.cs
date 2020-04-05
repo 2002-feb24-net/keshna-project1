@@ -10,9 +10,10 @@ namespace Project1.Models
         [Required]
         [Display(Name = "Cup-Cake Name")]
         public string Pname { get; set; }
-
       
         [Required]
+        [Range(1, 100)]
+        [DataType(DataType.Currency)]
         public decimal Price { get; set; }
 
         [Display(Name = "Store ID")]
