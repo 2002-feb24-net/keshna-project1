@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DataAccess.Repositories
 {
-    public class CupCakeRepository : ICustomer
+    public class CupCakeRepository
     {
         private readonly CupCakeContext _dbContext;
 
@@ -54,7 +54,7 @@ namespace DataAccess.Repositories
         public void AddNewCustomer(Customer customer1)
         {
 
-            var customer = new Customers
+            var customer = new DataAccess.Entities.Customers
             {
                 FirstName = customer1.FirstName,
                 LastName = customer1.LastName
@@ -78,7 +78,7 @@ namespace DataAccess.Repositories
         public void AddProductToOrder(Order o, Product p)
         {
             var track = _dbContext.Inventory.Include(p => p.Product).Select(z => z).Where(l => (l.ProductId == p.ProductId));
-            var product = new OrderDetails
+            var product = new DataAccess.Entities.OrderDetails
             {
                 OrderId = o.OrderId,
                 InventoryId = track.First().InventoryId
@@ -93,8 +93,6 @@ namespace DataAccess.Repositories
             return _dbContext.Customers.Select(c => c).ToList();
         }
 
-
-
         public Customers GetCustomerByName(string firstname, string lastname)
         {
             return _dbContext.Customers.First(c => (c.FirstName == firstname) && (c.LastName == lastname));
@@ -102,7 +100,7 @@ namespace DataAccess.Repositories
 
         public void MakeOrder(int customerId, int storeId, Order blogic)
         {
-            var order = new Orders
+            var order = new DataAccess.Entities.Orders
             {
                 CustomerId = customerId,
                 LocationId = storeId,

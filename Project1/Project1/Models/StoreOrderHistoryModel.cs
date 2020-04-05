@@ -16,7 +16,7 @@ namespace Project1.Models
         public string Pname { get; set; }
         public decimal Price { get; set; }
         [Required]
-        [DisplayName("Inventory Amount")]
+        [DisplayName("Stock")]
         public int InventoryAmount { get; set; }
     }
 }

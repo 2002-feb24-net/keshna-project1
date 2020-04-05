@@ -15,6 +15,7 @@ namespace Project1.Models
         [Required]
         public decimal Price { get; set; }
 
+        [Display(Name = "Store ID")]
         public int StoreID { get; set; }
 
 

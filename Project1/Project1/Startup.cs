@@ -33,7 +33,7 @@ namespace Project1
             services.AddDbContext<CupCakeContext>(options =>
             {
                 options.UseSqlServer(connectionString);
-              options.UseLoggerFactory(MyLoggerFactory.AddSerilog(Log.Logger));
+                options.UseLoggerFactory(MyLoggerFactory.AddSerilog(Log.Logger));
 
             });
 
