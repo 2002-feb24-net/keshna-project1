@@ -16,3 +16,8 @@ steps:
 - script: dotnet build
   workingDirectory: Project1
   displayName: dotnet build
+
+
+- script: dotnet test --logger trx
+  workingDirectory: Project1
+  displayName: dotnet test
