@@ -8,7 +8,11 @@ steps:
 - script: echo Hello, world!
   displayName: Print Hello World
 
-- script: |
-    echo "showing current directory contents"
-    ls
-  displayName: show directory contents
+# - script: |
+#     echo "showing current directory contents"
+#     ls
+#   displayName: show directory contents
+
+- script: dotnet build
+   workingDirectory:Project1
+  displayName: dotnet build
