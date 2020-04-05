@@ -1,53 +1,140 @@
 trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
+
+pr:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
 
-steps:
-- script: echo Hello, world!
-  displayName: Print Hello World
+- stage: build
 
-# - script: |
-#     echo "showing current directory contents"
-#     ls
-#   displayName: show directory contents
+  variables:
+    sdkVersion: 3.1.x
+    solutionPath: Project1
+    buildConfiguration: Release
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'sonarcloud-keshna'
-    organization: '2002-feb24-net'
-    scannerMode: 'MSBuild'
-    projectKey: '2002-feb24-net_keshna-project1'
-    projectName: 'keshna-Project1'
+  jobs:
 
-- script: dotnet build
-  workingDirectory: Project1
-  displayName: dotnet build
+  - job: build
 
+    pool:
+      vmImage: ubuntu-latest
 
-- script: dotnet test --logger trx
-  workingDirectory: Project1
-  displayName: dotnet test
+    steps:
 
+    - task: UseDotNet@2
+      inputs:
+        packageType: sdk
+        version: $(sdkVersion)
+      displayName: dotnet $(sdkVersion)
 
-# the default "condition" for every step is "succeeded()" - run this step if the previous step succeeded
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: publish
+        publishWebProjects: true
+        arguments:
+          --configuration $(buildConfiguration)
+          --output $(Build.ArtifactStagingDirectory)/publish
+        modifyOutputPath: false
+        zipAfterPublish: false
+      displayName: dotnet publish
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
+    - publish: $(Build.ArtifactStagingDirectory)/publish
+      artifact: app
+      displayName: artifact publish app
 
-# this task looks for a zip file and deploys it to azure app service.
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'Azure subscription 1(e2856ace-6e0c-471a-af8a-8883735b305d)'
-    appType: 'webApp'
-    WebAppName: 'CupCakeKesh'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+  - job: test
+
+    pool:
+      vmImage: ubuntu-latest
+
+    steps:
+
+    # disabled because of bug in SonarCloudPrepare task
+    - task: UseDotNet@2
+      enabled: false
+      inputs:
+        packageType: sdk
+        version: $(sdkVersion)
+      displayName: dotnet $(sdkVersion)
+
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: sonarcloud-keshna
+        organization: 2002-feb24-net
+        scannerMode: MSBuild
+        projectKey: 2002-feb24-net_keshna-project1
+        projectName: keshna-Project1
+        extraProperties: |
+          sonar.exclusions=**/lib/**
+      displayName: sonarcloud analysis prepare
+
+    - script: dotnet build $(solutionPath)
+        --configuration $(buildConfiguration)
+      displayName: dotnet build
+
+    - script: dotnet test $(solutionPath)
+        --configuration $(buildConfiguration)
+        --collect "XPlat Code Coverage"
+        --logger trx
+        --no-build
+        --results-directory $(Common.TestResultsDirectory)
+      continueOnError: true
+      displayName: dotnet test
+
+    - task: SonarCloudAnalyze@1
+      displayName: sonarcloud analysis run
+
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: $(Common.TestResultsDirectory)/*.trx
+      displayName: test results build publish
+
+    - task: PublishCodeCoverageResults@1
+      condition: succeededOrFailed()
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: $(Common.TestResultsDirectory)/*/coverage.cobertura.xml
+      displayName: code coverage build publish
+
+    - task: SonarCloudPublish@1
+      condition: succeededOrFailed()
+      displayName: sonarcloud results build publish
+
+- stage: deploy
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  dependsOn: build
+
+  jobs:
+
+  - deployment: deploy_dev
+
+    pool:
+      vmImage: ubuntu-latest
+
+    environment: dev
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - download: current
+            artifact: app
+            displayName: artifact download app
+
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: AzureRM
+              azureSubscription: Azure subscription 1(e2856ace-6e0c-471a-af8a-8883735b305d)
+              appType: webApp
+              WebAppName: CupCakeKesh
+              packageForLinux: $(Pipeline.Workspace)/app
+            displayName: azure app service deploy
