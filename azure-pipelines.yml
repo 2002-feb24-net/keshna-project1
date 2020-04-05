@@ -13,6 +13,14 @@ steps:
 #     ls
 #   displayName: show directory contents
 
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'sonarcloud-keshna'
+    organization: '2002-feb24-net'
+    scannerMode: 'MSBuild'
+    projectKey: '2002-feb24-net_keshna-project1'
+    projectName: 'keshna-Project1'
+
 - script: dotnet build
   workingDirectory: Project1
   displayName: dotnet build
