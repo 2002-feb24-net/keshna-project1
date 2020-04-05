@@ -5,7 +5,12 @@ using System.ComponentModel.DataAnnotations;
 namespace Project1.Models
 {
     public class InventoryModel
+
     {
+
+        [Display(Name = "ID")]
+        public int Id { get; set; }
+
         [DisplayName("Product Id")]
         public int ProductId { get; set; }
 

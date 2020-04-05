@@ -4,19 +4,40 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Repositories
 {
-    public class CupCakeRepository
+    
+    /// <summary>
+    /// A repository managing data access for Store objects
+    /// using Entity Framework.
+    /// </summary>
+    /// <remarks>
+    /// This class ought to have better exception handling and logging.
+    /// </remarks>
+    public class CupCakeRepository 
     {
         private readonly CupCakeContext _dbContext;
+        private readonly ILogger<CupCakeRepository> _logger;
 
-        public CupCakeRepository(CupCakeContext context)
+        /// <summary>
+        /// Initializes a new repository.
+        /// </summary>
+        /// <param name="dbContext">The data source</param>
+        /// <param name="logger">The logger</param>
+        public CupCakeRepository(CupCakeContext context, ILogger<CupCakeRepository> logger)
         {
             _dbContext = context ?? throw new ArgumentNullException(nameof(context));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         }
 
-
+        /// <summary>
+        /// Get all Stores with deferred execution,
+      
+        /// </summary>
+        /// <returns>The collection of stores</returns>
         public List<CupCake> GetStores(List<CupCake> locations)
         {
             if (_dbContext.Stores.Any())
@@ -50,11 +71,19 @@ namespace DataAccess.Repositories
             }
         }
 
-
+        /// <summary>
+        /// Add a customer
+        /// </summary>
+        /// <param name="customer1">The Store</param>
         public void AddNewCustomer(Customer customer1)
         {
+            if (customer1.CustomerId != 0)
+            {
+                _logger.LogWarning("Customer to be added has an ID ({CustomerId}) already: ignoring.", customer1.CustomerId);
+            }
 
-            var customer = new DataAccess.Entities.Customers
+            _logger.LogInformation("Adding customer");
+            var customer = new Customers
             {
                 FirstName = customer1.FirstName,
                 LastName = customer1.LastName
@@ -65,6 +94,9 @@ namespace DataAccess.Repositories
             customer1.CustomerId = customer.CustomerId;
         }
 
+        /// <summary>
+        /// Get products by name
+        /// </summary>
         public Product GetProductByTitle(string search, CupCake b)
         {
             var sqlProduct = _dbContext.Products.First(p => p.Pname == search);
@@ -78,7 +110,7 @@ namespace DataAccess.Repositories
         public void AddProductToOrder(Order o, Product p)
         {
             var track = _dbContext.Inventory.Include(p => p.Product).Select(z => z).Where(l => (l.ProductId == p.ProductId));
-            var product = new DataAccess.Entities.OrderDetails
+            var product = new OrderDetails
             {
                 OrderId = o.OrderId,
                 InventoryId = track.First().InventoryId
@@ -88,6 +120,10 @@ namespace DataAccess.Repositories
             _dbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// Get all customers.
+        /// </summary>
+        /// <returns>The collection of Customers</returns>
         public List<Customers> GetCustomers()
         {
             return _dbContext.Customers.Select(c => c).ToList();
@@ -100,7 +136,7 @@ namespace DataAccess.Repositories
 
         public void MakeOrder(int customerId, int storeId, Order blogic)
         {
-            var order = new DataAccess.Entities.Orders
+            var order = new Orders
             {
                 CustomerId = customerId,
                 LocationId = storeId,
@@ -112,6 +148,9 @@ namespace DataAccess.Repositories
             blogic.OrderId = order.OrderId;
         }
 
+        /// <summary>
+        /// Get inventory details
+        /// </summary>
         public List<Product> GetInventory(int storeId, List<Product> products)
         {
             if (_dbContext.Inventory.Any())
@@ -129,14 +168,24 @@ namespace DataAccess.Repositories
             return products;
         }
 
+        /// <summary>
+        /// Delete the inventory data
+        /// </summary>
         public void DeleteInventory(CupCake b, Product p)
         {
+            _logger.LogInformation("Deleting product {ProductId}", p);
+
             _dbContext.Inventory.Remove(_dbContext.Inventory.
                 First(i => (i.LocationId == b.LocationId) && (i.ProductId == p.ProductId)));
         }
 
-        public void EditInventory(CupCake b, Product p)
+        /// <summary>
+        /// Edit the inventory data
+        /// </summary>
+         public void EditInventory(CupCake b, Product p)
         {
+            _logger.LogInformation("Updating Product {ProductId}", p);
+
             var Inventory = _dbContext.Inventory.First(i => (i.LocationId == b.LocationId) && (i.ProductId == p.ProductId));
 
             Inventory.InventoryAmount = p.InventoryAmount;
@@ -169,6 +218,10 @@ namespace DataAccess.Repositories
             return orders;
         }
 
+        /// <summary>
+        /// Get order history.
+        /// </summary>
+        /// <param name="id">The ID of the store location</param>
         public List<StoreOrderHistory> GetStoreOrderHistory(int id)
         {
             List<StoreOrderHistory> orders = new List<StoreOrderHistory>();

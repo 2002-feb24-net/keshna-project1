@@ -9,6 +9,7 @@ using DataAccess.Entities;
 using DataAccess.Repositories;
 using Serilog;
 using Microsoft.Extensions.Logging;
+using Project1.Controllers;
 
 namespace Project1
 {
@@ -40,6 +41,9 @@ namespace Project1
             services.AddScoped<CupCakeRepository>();
 
             services.AddControllersWithViews();
+
+            services.AddDbContext<InveentoriesController>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("InveentoriesController")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
