@@ -9,16 +9,16 @@
 <p>
     <a asp-action="Create"  class="btn  btn-outline-success btn-sm">Create New</a>
 </p>
-<table  class="table table-hover table-dark">
+<table class="table table-hover table-dark">
     <thead>
         <tr>
-            <th class="col">
+            <th>
                 @Html.DisplayNameFor(model => model.InventoryAmount)
             </th>
-            <th class="col">
+            <th>
                 @Html.DisplayNameFor(model => model.Location)
             </th>
-            <th class="col">
+            <th>
                 @Html.DisplayNameFor(model => model.Product)
             </th>
             <th class="col"></th>
@@ -27,16 +27,16 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td class="col">
+            <td>
                 @Html.DisplayFor(modelItem => item.InventoryAmount)
             </td>
-            <td class="col">
+            <td>
                 @Html.DisplayFor(modelItem => item.Location.City)
             </td>
-            <td class="col">
+            <td>
                 @Html.DisplayFor(modelItem => item.Product.Pname)
             </td>
-            <td class="col">
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.InventoryId" class="btn  btn-outline-success btn-sm">Edit</a> 
                 <a asp-action="Details" asp-route-id="@item.InventoryId" class="btn  btn-outline-success btn-sm">Details</a> 
                 <a asp-action="Delete" asp-route-id="@item.InventoryId" class="btn  btn-outline-danger btn-sm">Delete</a>
