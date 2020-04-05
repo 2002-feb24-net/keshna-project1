@@ -10,18 +10,19 @@
     <a asp-action="Create"  class="btn  btn-outline-success btn-sm">Create New</a>
 </p>
 <table class="table table-hover table-dark">
+    <caption>inventory</caption>
     <thead>
         <tr>
-            <th>
+            <th id="1">
                 @Html.DisplayNameFor(model => model.InventoryAmount)
             </th>
-            <th>
+            <th id="2">
                 @Html.DisplayNameFor(model => model.Location)
             </th>
-            <th>
+            <th id="3">
                 @Html.DisplayNameFor(model => model.Product)
             </th>
-            <th class="col"></th>
+            <th id="4"></th>
         </tr>
     </thead>
     <tbody>
