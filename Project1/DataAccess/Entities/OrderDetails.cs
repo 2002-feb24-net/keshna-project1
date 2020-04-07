@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace DataAccess.Entities
 {
     public partial class OrderDetails
