@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using BusinessLogic.Interface;
 
 namespace DataAccess.Repositories
 {
@@ -16,7 +17,7 @@ namespace DataAccess.Repositories
     /// <remarks>
     /// This class ought to have better exception handling and logging.
     /// </remarks>
-    public class CupCakeRepository 
+    public class CupCakeRepository  : ICupCakeRepository
     {
         private readonly CupCakeContext _dbContext;
         private readonly ILogger<CupCakeRepository> _logger;
@@ -121,18 +122,18 @@ namespace DataAccess.Repositories
         }
 
         /// <summary>
-        /// Get all customers.
+        /// Get a customer by name.
         /// </summary>
         /// <returns>The collection of Customers</returns>
-        public List<Customers> GetCustomers()
+    
+        public Customer GetCustomerByName(string firstname, string lastname)
         {
-            return _dbContext.Customers.Select(c => c).ToList();
-        }
+            var sqlCust = _dbContext.Customers.First(c => (c.FirstName == firstname) && (c.LastName == lastname));
 
-        public Customers GetCustomerByName(string firstname, string lastname)
-        {
-            return _dbContext.Customers.First(c => (c.FirstName == firstname) && (c.LastName == lastname));
-        }
+            Customer product = new Customer(sqlCust.FirstName, sqlCust.LastName);
+            return product;
+
+             }
 
         public void MakeOrder(int customerId, int storeId, Order blogic)
         {
