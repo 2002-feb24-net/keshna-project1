@@ -132,9 +132,9 @@ stages:
 
           - task: AzureRmWebAppDeployment@4
             inputs:
-              ConnectionType: AzureRM
-              azureSubscription: Azure subscription 1(e2856ace-6e0c-471a-af8a-8883735b305d)
-              appType: webApp
-              WebAppName: CupCakeKesh
-              packageForLinux: $(Pipeline.Workspace)/app
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'Azure subscription 1(e2856ace-6e0c-471a-af8a-8883735b305d)'
+              appType: 'webApp'
+              WebAppName: 'Project120200406093216'
+              packageForLinux: '$(Pipeline.Workspace)/app'
             displayName: azure app service deploy
