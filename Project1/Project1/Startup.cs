@@ -30,7 +30,7 @@ namespace Project1
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString("CupCakeDb");
-            Log.Logger = new LoggerConfiguration().WriteTo.File("C:\\Revature\\log.txt").CreateLogger();
+            Log.Logger = new LoggerConfiguration().WriteTo.File("C:/Revature/log.txt").CreateLogger();
             services.AddDbContext<CupCakeContext>(options =>
             {
                 options.UseSqlServer(connectionString);
