@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace BusinessLogic.Interface
 {
-      public interface Interface1
+      public interface ICupCakeRepository
     {
 
          List<CupCake> GetStores(List<CupCake> locations);
